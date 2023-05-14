@@ -1,0 +1,18 @@
+# IDE config
+.vscode/
+.idea/
+*backup/
+*DS_store
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+*.sql
+
+
+# Project
+checkpoints/
+data/
