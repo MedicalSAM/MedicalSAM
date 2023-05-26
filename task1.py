@@ -37,7 +37,7 @@ img_filenames = os.listdir(img_path)
 label_path = './data/RawData/Training/label/'
 label_filenames = os.listdir(label_path)
 
-for img_num in range(30):
+for img_num in range(0, 30):
     # read image and label
     image_nib = nib.load(img_path + img_filenames[img_num])
     image = image_nib.get_fdata().astype(np.uint8)
@@ -47,10 +47,12 @@ for img_num in range(30):
     mDice = []
     
     
-    print("img_num: ", img_num)
-    print(image.shape)
-    print(label.shape)
+    # print("img_num: ", img_num)
+    # print(image.shape)
+    # print(label.shape)
     # output: (512, 512, 148), (512, 512, 139). Why?
+    
+    z = min(image.shape[2], label.shape[2])
     
     for img_z in range(z):
         # get slice of 3D image and label
@@ -65,7 +67,7 @@ for img_num in range(30):
         precison = 0
         for i in range(l):
             s = torch.tensor(sam_result[i]['segmentation'])
-            precison = max(dice(s, label0), precison)
+            precison = max(dice(s, label0), precison)       # choose the best mask
         mDice.append(precison)
         
     print("img_num: ", img_num, "mDice: ", sum(mDice)/len(mDice))
