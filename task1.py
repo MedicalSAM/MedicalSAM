@@ -64,6 +64,7 @@ for img_num in range(0, 30):
         label0 = torch.tensor(label0)
         
         l = len(sam_result)
+        # SAM will generate several masks with different performance, choose the best one here
         precison = 0
         for i in range(l):
             s = torch.tensor(sam_result[i]['segmentation'])
