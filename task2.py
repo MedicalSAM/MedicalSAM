@@ -20,6 +20,8 @@ from sklearn.model_selection import train_test_split
 
 from tensorboardX import SummaryWriter
 
+import argparse
+
 # SAM model
 import sys
 sys.path.append("..")
@@ -37,21 +39,21 @@ sam_model.to(device=device)
 
 num_classes = 14 # or however many classes you have
 
-sam_model.mask_decoder = torch.nn.Conv3d(
-    in_channels=sam_model.mask_decoder.in_channels,
-    out_channels=num_classes,
-    kernel_size=sam_model.mask_decoder.kernel_size,
-    stride=sam_model.mask_decoder.stride,
-    padding=sam_model.mask_decoder.padding,
-    dilation=sam_model.mask_decoder.dilation,
-    groups=sam_model.mask_decoder.groups,
-    bias=sam_model.mask_decoder.bias,
-    padding_mode=sam_model.mask_decoder.padding_mode
-)
+# sam_model.mask_decoder = torch.nn.Conv3d(
+#     in_channels=sam_model.mask_decoder.in_channels,
+#     out_channels=num_classes,
+#     kernel_size=sam_model.mask_decoder.kernel_size,
+#     stride=sam_model.mask_decoder.stride,
+#     padding=sam_model.mask_decoder.padding,
+#     dilation=sam_model.mask_decoder.dilation,
+#     groups=sam_model.mask_decoder.groups,
+#     bias=sam_model.mask_decoder.bias,
+#     padding_mode=sam_model.mask_decoder.padding_mode
+# )
 
 
 optimizer = torch.optim.Adam(sam_model.mask_decoder.parameters()) 
-loss_fn = dice(average='macro')
+# loss_fn = dice(average='macro')
 
 # create a SummaryWriter object to write to a log directory
 log_dir = './logs'
@@ -64,30 +66,33 @@ label_path = './data/RawData/Training/label/'
 label_filenames = os.listdir(label_path)
 
 
-# combine image and label filenames into tuples
-data = [(img_filenames[i], label_filenames[i]) for i in range(len(img_filenames))]
 
-# split data into train and validation sets
-train_data, val_data = train_test_split(data, test_size=0.2, random_state=42)
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_epochs', type=int, default=10, help='number of epochs to train (default: 10)')
+args = parser.parse_args()
 
-# extract image and label filenames from train and validation sets
-train_img_filenames = [t[0] for t in train_data]
-train_label_filenames = [t[1] for t in train_data]
-val_img_filenames = [t[0] for t in val_data]
-val_label_filenames = [t[1] for t in val_data]
+num_epochs = args.num_epochs
 
-num_epochs = 10
+def loss_fn(pred, target, smooth = 1.):
+    pred = pred.contiguous()
+    target = target.contiguous()    
+
+    intersection = (pred * target).sum(dim=2).sum(dim=2)
+    
+    loss = (1 - ((2. * intersection + smooth) / (pred.sum(dim=2).sum(dim=2) + target.sum(dim=2).sum(dim=2) + smooth)))
+    
+    return loss.mean()
+
 
 # Training loop
 
 for epoch in range(num_epochs):
-    num_images = len(train_img_filenames)
-    for img_num in range(num_images):
+    for img_num in range(24):
         # load image and label
-        image_nib = nib.load(train_img_filenames[img_num])
+        image_nib = nib.load(img_path + img_filenames[img_num])
         image = image_nib.get_fdata().astype(np.uint8)
         x, y, z = image.shape
-        label_nib = nib.load(train_label_filenames[img_num])
+        label_nib = nib.load(label_path + label_filenames[img_num])
         label = label_nib.get_fdata().astype(np.uint8)
 
         # convert to tensor and move to device
@@ -102,8 +107,8 @@ for epoch in range(num_epochs):
         dice_accuracy = dice(output, label_tensor)
         
         # write to SummaryWriter
-        writer.add_scalar('train/loss', loss.item(), num_images * epoch + img_num)
-        writer.add_scalar('train/dice_accuracy', dice_accuracy, num_images * epoch + img_num)
+        writer.add_scalar('train/loss', loss.item(), 24 * epoch + img_num)
+        writer.add_scalar('train/dice_accuracy', dice_accuracy, 24 * epoch + img_num)
 
 
         # backward pass
@@ -113,15 +118,14 @@ for epoch in range(num_epochs):
         
     val_loss = 0
     val_dice = 0
-    num_val_images = len(val_img_filenames) # or however many validation images you have
 
     with torch.no_grad():
-        for img_num in range(num_val_images):
+        for img_num in range(25, 30):
             # load image and label
-            image_nib = nib.load(val_img_filenames[img_num])
+            image_nib = nib.load(img_path + img_filenames[img_num])
             image = image_nib.get_fdata().astype(np.uint8)
             x, y, z = image.shape
-            label_nib = nib.load(val_label_filenames[img_num])
+            label_nib = nib.load(label_path + label_filenames[img_num])
             label = label_nib.get_fdata().astype(np.uint8)
 
             # convert to tensor and move to device
@@ -135,8 +139,8 @@ for epoch in range(num_epochs):
             val_loss += loss_fn(output, label_tensor).item()
             val_dice += dice(F.threshold(F.normalize(output), dim=1, threshold=0.5), label_tensor).item()
 
-        val_loss /= num_val_images
-        val_dice /= num_val_images
+        val_loss /= 6
+        val_dice /= 6
         
         # draw validation loss and accuracy
         writer.add_scalar('val/loss', val_loss, epoch)
