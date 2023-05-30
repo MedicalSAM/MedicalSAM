@@ -65,10 +65,11 @@ for img_num in range(0, 30):
         
         l = len(sam_result)
         # SAM will generate several masks with different performance, choose the best one here
-        precison = 0
-        for i in range(l):
-            s = torch.tensor(sam_result[i]['segmentation'])
-            precison = max(dice(s, label0), precison)       # choose the best mask
+        # print(sam_result[0].keys())
+        # dict_keys(['segmentation', 'area', 'bbox', 'predicted_iou', 'point_coords', 'stability_score', 'crop_box'])
+        best_result = max(sam_result, key=lambda x: x['stability_score'])
+        s = torch.tensor(best_result['segmentation'])
+        precison = dice(s, label0)       # choose the best mask
         mDice.append(precison)
         
     print("img_num: ", img_num, "mDice: ", sum(mDice)/len(mDice))
