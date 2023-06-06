@@ -8,6 +8,10 @@
 __pycache__/
 *.py[cod]
 
+# Testing
+test.py
+test.ipynb
+
 # Logs
 *.log
 *.sql
