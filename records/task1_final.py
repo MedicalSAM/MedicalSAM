@@ -114,3 +114,11 @@ for img_num in range(0, 30):
             mDice.append(sum(dices)/len(dices))
 
     print(img_num, sum(mDice)/len(mDice))
+        
+        
+        
+        
+        
+        
+
+        
