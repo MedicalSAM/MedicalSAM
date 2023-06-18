@@ -1,4 +1,4 @@
-# SAMed
+# task3
 
 ## Overview
 
@@ -14,8 +14,8 @@ We finetune the `vit_b` version of SAM and output labels of organs. This model a
 
 run the following commands:
 ```
-conda create -n SAMed python=3.7.11
-conda activate SAMed
+conda create -n task3 python=3.7.11
+conda activate task3
 pip install -r requirements.txt
 ```
 
