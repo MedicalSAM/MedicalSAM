@@ -1,0 +1,23 @@
+[13:00:21.821] Namespace(ckpt='/root/autodl-tmp/SAM_ckpt/sam_vit_b_01ec64.pth', config=None, dataset='Synapse', deterministic=1, img_size=512, input_size=224, is_savenii=True, list_dir='./lists/lists_Synapse/', lora_ckpt='results3/Synapse_512_pretrain_vit_b_epo200_bs12_lr0.005/epoch_159.pth', module='sam_lora_image_encoder', num_classes=13, output_dir='testresult', rank=4, seed=1234, vit_name='vit_b', volume_path='/root/autodl-tmp/dataset/Synapse/test_vol_h5')
+[13:00:21.823] 6 test iterations per epoch
+[13:05:56.893] idx 0 case case0035 mean_dice 0.812579 mean_hd95 4.565258
+[13:17:24.742] idx 1 case case0036 mean_dice 0.815022 mean_hd95 5.503020
+[13:23:28.305] idx 2 case case0037 mean_dice 0.808283 mean_hd95 6.577010
+[13:29:32.886] idx 3 case case0038 mean_dice 0.769282 mean_hd95 4.406334
+[13:34:53.419] idx 4 case case0039 mean_dice 0.743711 mean_hd95 4.129817
+[13:47:00.613] idx 5 case case0040 mean_dice 0.809262 mean_hd95 4.066551
+[13:47:00.717] Mean class 1 name spleen mean_dice 0.941998 mean_hd95 1.701793
+[13:47:00.717] Mean class 2 name right kidney mean_dice 0.907010 mean_hd95 2.172102
+[13:47:00.717] Mean class 3 name left kidney mean_dice 0.930893 mean_hd95 1.813053
+[13:47:00.717] Mean class 4 name gallbladder mean_dice 0.764044 mean_hd95 3.952055
+[13:47:00.717] Mean class 5 name  esophagus mean_dice 0.757517 mean_hd95 5.326065
+[13:47:00.717] Mean class 6 name  liver mean_dice 0.951340 mean_hd95 2.611674
+[13:47:00.717] Mean class 7 name stomach mean_dice 0.867136 mean_hd95 13.048796
+[13:47:00.717] Mean class 8 name aorta mean_dice 0.862428 mean_hd95 3.187184
+[13:47:00.717] Mean class 9 name inferior vena cava mean_dice 0.793517 mean_hd95 5.363237
+[13:47:00.717] Mean class 10 name portal vein and splenic vein mean_dice 0.709222 mean_hd95 7.647508
+[13:47:00.717] Mean class 11 name pancreas mean_dice 0.753815 mean_hd95 5.423604
+[13:47:00.718] Mean class 12 name right adrenal gland mean_dice 0.532181 mean_hd95 5.238024
+[13:47:00.718] Mean class 13 name left adrenal gland mean_dice 0.538201 mean_hd95 5.885551
+[13:47:00.718] Testing performance in best val model: mean_dice : 0.793023 mean_hd95 : 4.874665
+[13:47:00.718] Testing Finished!
